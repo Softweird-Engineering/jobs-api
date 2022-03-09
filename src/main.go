@@ -1,40 +1,32 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"kinza/src/config"
+	"kinza/src/docs"
+	"kinza/src/router"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
-	router := gin.New()
+	// Gin Init
+	app := gin.Default()
 
-	// Logging to a file.
-	//f, _ := os.Create("gin.log")
-	//gin.DefaultWriter = io.MultiWriter(f)
+	// Config Init
+	conf := config.LoadConfig("C:\\Progs\\kinza\\src\\config\\config.json")
 
-	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+	// Swagger Init
+	docs.SwaggerInfo.BasePath = conf.BasePath
 
-		// your custom format
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
-			param.ClientIP,
-			param.TimeStamp.Format(time.RFC1123),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCode,
-			param.Latency,
-			param.Request.UserAgent(),
-			param.ErrorMessage,
-		)
-	}))
-	router.Use(gin.Recovery())
+	// Router Init
+	baseGroup := app.Group(conf.BasePath)
+	{
+		router.InitRoutes(baseGroup)
+	}
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	router.Run()
+	// Servin Application
+	app.Run(conf.Host + ":" + conf.Port)
 }

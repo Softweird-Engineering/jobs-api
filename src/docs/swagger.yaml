@@ -1,0 +1,25 @@
+definitions:
+  router.Healthcheck:
+    properties:
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /healthcheck:
+    get:
+      consumes:
+      - application/json
+      description: Liveness Probe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/router.Healthcheck'
+      summary: Healthcheck
+      tags:
+      - Default
+swagger: "2.0"
