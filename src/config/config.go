@@ -7,9 +7,10 @@ import (
 )
 
 type Configuration struct {
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	BasePath string `json:"base_path"`
+	Host        string `json:"host"`
+	Port        string `json:"port"`
+	BasePath    string `json:"base_path"`
+	LogFilename string `json:"log_filename"`
 }
 
 func LoadConfig(path string) Configuration {

@@ -4,6 +4,7 @@ import (
 	"kinza/src/config"
 	"kinza/src/docs"
 	"kinza/src/router"
+	"kinza/src/utils"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -16,6 +17,9 @@ func main() {
 
 	// Config Init
 	conf := config.LoadConfig("C:\\Progs\\kinza\\src\\config\\config.json")
+
+	// Logger init
+	app.Use(utils.Logger_JSON(conf.LogFilename, true))
 
 	// Swagger Init
 	docs.SwaggerInfo.BasePath = conf.BasePath
