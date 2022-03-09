@@ -16,7 +16,7 @@ func main() {
 	app := gin.Default()
 
 	// Config Init
-	conf := config.LoadConfig("C:\\Progs\\kinza\\src\\config\\config.json")
+	conf := config.LoadConfig("./config/config.json")
 
 	// Logger init
 	app.Use(utils.Logger_JSON(conf.LogFilename, true))
