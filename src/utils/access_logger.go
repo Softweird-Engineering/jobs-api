@@ -20,6 +20,9 @@ func Logger_JSON(filename string, w_stdout bool) gin.HandlerFunc {
 
 		file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err == nil {
+			log.WithFields({
+					"filename": filename,
+			}).Info("Outputing logs to file.")
 			log.SetOutput(file)
 		} else {
 			log.Error("Failed to log to file, using default stderr")
