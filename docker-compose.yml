@@ -6,3 +6,4 @@ services:
             - .env
         ports:
             - 5000:5000
+        # TODO: add volume for logs
