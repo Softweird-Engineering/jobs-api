@@ -1,6 +1,0 @@
-{
-    "host": "localhost",
-    "port": "5000",
-    "base_path": "/api",
-    "log_filename": "app.log"
-}
