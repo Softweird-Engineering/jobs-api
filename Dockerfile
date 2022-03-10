@@ -1,5 +1,4 @@
 FROM golang:buster
-ARG GOPROXY=https://goproxy.cn,direct
 
 COPY ./src /app
 WORKDIR /app

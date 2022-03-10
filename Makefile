@@ -1,5 +1,4 @@
-.PHONY: build
-build:
-	go build -v ./src
-
-.DEFAULT_GOAL := build
+dev:
+	docker-compose -f docker-compose.yml up --build
+down:
+	docker-compose -f docker-compose.yml down --volumes --remove-orphans
