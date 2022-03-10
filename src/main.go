@@ -14,14 +14,15 @@ import (
 
 func main() {
 	// Gin Init
-	app := gin.Default()
+	app := gin.New()
+	app.Use(gin.Recovery())
 
 	// Config Init
 	conf := config.Config(".")
 	log.Info("Config set up successfully!")
 
 	// Logger init
-	app.Use(utils.Logger_JSON(conf.Log.Filename, true))
+	app.Use(utils.Logger_JSON(conf.Log.Filename, conf.Gin.Mode))
 
 	// Router Init
 	baseGroup := app.Group(conf.Server.BasePath)
