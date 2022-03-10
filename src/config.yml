@@ -4,7 +4,7 @@ server:
     basepath: "/api"
 
 log:
-    filename: "./server.log"
+    filename: "./logs/server.log"
 
 gin:
     mode: "debug"
