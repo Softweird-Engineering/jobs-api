@@ -6,7 +6,7 @@ We use:
 - [Golang](https://github.com/golang/go)
 - [gin](https://github.com/gin-gonic/gin)
 - [viper](https://github.com/spf13/viper)
-- [logrus](https://github.com/spf13/viper)
+- [logrus](https://github.com/sirupsen/logrus)
 - makefile
 - MongoDB
 - etc.
