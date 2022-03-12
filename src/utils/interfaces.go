@@ -1,5 +1,7 @@
 package utils
 
-type Respo interface {
-	M()
+
+// Interface applied for all response structures.
+type Responser interface{
+    String() string
 }
