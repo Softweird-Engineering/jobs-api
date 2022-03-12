@@ -1,33 +1,35 @@
 package config
 
 import (
-	"github.com/spf13/viper"
-	"sync"
 	"strings"
+	"sync"
+
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
-	once sync.Once
+	once     sync.Once
 	instance Configuration
 )
 
 const config_filename = "config"
+const config_path = "."
 
-func Config(config_path string) Configuration {
+func Config() Configuration {
 	once.Do(func() {
-		instance = loadConfig(config_path)
+		instance = loadConfig()
 	})
 
 	return instance
 }
 
-func loadConfig(path string) Configuration {
+func loadConfig() Configuration {
 	var config_instance Configuration
 
 	// Set the file name, path, type of the configurations file
 	viper.SetConfigName(config_filename)
-	viper.AddConfigPath(path)
+	viper.AddConfigPath(config_path)
 	viper.SetConfigType("yaml")
 
 	// Getting evironment variables
@@ -44,7 +46,7 @@ func loadConfig(path string) Configuration {
 	if err != nil {
 		log.WithFields(log.Fields{
 			"Error": err,
-			}).Error("Unable to decode into struct")
+		}).Error("Unable to decode into struct")
 	}
 
 	return config_instance
