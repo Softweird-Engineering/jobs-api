@@ -12,17 +12,25 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func main() {
+// InitApp ...
+func InitApp() *gin.Engine {
 	// Gin Init
 	app := gin.New()
 	app.Use(gin.Recovery())
 
 	// Config Init
-	conf := config.Config(".")
+	conf := config.Config()
 	log.Info("Config set up successfully!")
 
 	// Logger init
-	app.Use(utils.Logger_JSON(conf.Log.Filename, conf.Gin.Mode))
+	if conf.Gin.Mode == "release" {
+		app.Use(utils.Logger_JSON(conf.Log.Filename))
+	} else if conf.Gin.Mode == "debug" {
+		gin.ForceConsoleColor()
+		app.Use(gin.Logger())
+	} else if conf.Gin.Mode == "testing" {
+		gin.ForceConsoleColor()
+	}
 
 	// Router Init
 	baseGroup := app.Group(conf.Server.BasePath)
@@ -34,6 +42,12 @@ func main() {
 	docs.SwaggerInfo.BasePath = conf.Server.BasePath
 	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
+	return app
+}
+
+func main() {
+	conf := config.Config()
+	app := InitApp()
 	// Serving Application
 	log.Info("Starting application...")
 	app.Run(conf.Server.Host + ":" + conf.Server.Port)

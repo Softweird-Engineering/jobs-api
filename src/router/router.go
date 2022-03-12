@@ -25,6 +25,7 @@ func healthcheck(ctx *gin.Context) {
 	})
 }
 
+// InitRoutes ...
 func InitRoutes(baseGroup *gin.RouterGroup) {
 	baseGroup.GET("/healthcheck", healthcheck)
 }
