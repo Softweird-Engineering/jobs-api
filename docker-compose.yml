@@ -1,13 +1,30 @@
-version: '3.0'
+version: '3.7'
 services:
     web:
         build: .
         env_file:
-            - .env
+            - environment/.env
         volumes:
             - logs/:/app/logs
         ports:
             - 5000:5000
+        depends_on:
+            - mongodb
 
-volumes:
+    mongodb:
+        image: mongo:5.0
+        env_file:
+            - environment/.env.db
+
+    test: 
+        build: .
+        command: go test .
+        env_file:
+            - environment/.env
+        ports:
+            - 5000:5000
+        depends_on:
+            - mongodb
+
+volumes: 
     logs:
