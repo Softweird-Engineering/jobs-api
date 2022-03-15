@@ -8,3 +8,6 @@ log:
 
 gin:
     mode: "debug"
+
+mongodb:
+    dsn: "mongodb://localhost"

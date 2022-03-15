@@ -1,21 +1,26 @@
 package config
 
 type Configuration struct {
-    Gin         Gin
-	Server      ServerConfiguration
-	Log         LogConfiguration
+	Gin     Gin
+	Server  ServerConfiguration
+	Log     LogConfiguration
+	Mongodb MongodbConfiguration
 }
 
 type LogConfiguration struct {
-    Filename    string
+	Filename string
 }
 
 type ServerConfiguration struct {
-	Host        string
-	Port        string
-	BasePath    string
+	Host     string
+	Port     string
+	BasePath string
 }
 
 type Gin struct {
-    Mode        string
+	Mode string
+}
+
+type MongodbConfiguration struct {
+	Dsn string
 }

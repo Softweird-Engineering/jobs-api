@@ -9,4 +9,6 @@ RUN go mod download
 COPY ./src /app
 RUN go build -o main
 
-ENTRYPOINT [ "./main" ]
+CMD [ "./main" ]
+
+
