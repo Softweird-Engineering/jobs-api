@@ -1,17 +1,22 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"kinza/config"
 	"kinza/docs"
 	"kinza/router"
 	"kinza/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // InitApp ...
@@ -54,9 +59,37 @@ func InitApp() (*gin.Engine, error) {
 	return app, nil
 }
 
+var (
+	mongoURI = "mongodb://localhost:27017"
+)
+
 func main() {
 	conf := config.Config()
 
+	// Db connection
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb+srv://Buba:boba22@cluster0.sbhjz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
+
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
+	demoDB := client.Database("demo")
+	catsCollection := demoDB.Collection("cats")
+	cursor, err := catsCollection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	var cats []bson.M
+	if err = cursor.All(ctx, &cats); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(cats)
+
+	// Inicialize
 	app, err := InitApp()
 	if err != nil {
 		log.Fatal(err)
