@@ -22,5 +22,12 @@ type Gin struct {
 }
 
 type MongodbConfiguration struct {
-	Dsn string
+	Dsn      string
+	Timeouts TimeoutsConfiguration
+	Schema   string
+}
+
+type TimeoutsConfiguration struct {
+	Connection int
+	Ping       int
 }

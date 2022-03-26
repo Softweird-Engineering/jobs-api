@@ -14,9 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // InitApp ...
@@ -38,13 +36,24 @@ func InitApp() (*gin.Engine, error) {
 		gin.ForceConsoleColor()
 		app.Use(gin.Logger())
 		logLevel = log.DebugLevel
-	} else if conf.Gin.Mode == "testing" {
+	} else if conf.Gin.Mode == "test" {
 		gin.ForceConsoleColor()
 		logLevel = log.ErrorLevel
 	} else {
 		return nil, errors.New("gin.mode is invalid")
 	}
 	log.SetLevel(logLevel)
+
+	// Db init
+	db := utils.Db()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(conf.Mongodb.Timeouts.Ping)*time.Second)
+	err := db.Client().Ping(ctx, readpref.Primary())
+	if err != nil {
+		log.WithFields(log.Fields{
+			"Error": err,
+		}).Error("troubles with ping")
+	}
+	cancel()
 
 	// Router Init
 	baseGroup := app.Group(conf.Server.BasePath)
@@ -59,41 +68,15 @@ func InitApp() (*gin.Engine, error) {
 	return app, nil
 }
 
-var (
-	mongoURI = "mongodb://localhost:27017"
-)
-
 func main() {
 	conf := config.Config()
-
-	// Db connection
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb+srv://Buba:boba22@cluster0.sbhjz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
-
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
-
-	demoDB := client.Database("demo")
-	catsCollection := demoDB.Collection("cats")
-	cursor, err := catsCollection.Find(ctx, bson.M{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	var cats []bson.M
-	if err = cursor.All(ctx, &cats); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(cats)
 
 	// Inicialize
 	app, err := InitApp()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer utils.CloseClient(conf.Mongodb.Timeouts.Connection)
 	// Serving Application
 	log.WithFields(log.Fields{
 		"Conf": fmt.Sprintf("%#v\n", conf),

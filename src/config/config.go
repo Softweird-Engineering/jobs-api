@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"strings"
 	"sync"
 
@@ -13,8 +14,10 @@ var (
 	instance Configuration
 )
 
-const config_filename = "config"
-const config_path = "."
+var (
+	config_filename = os.Getenv("CONFIG_FILENAME")
+	config_path     = os.Getenv("CONFIG_PATH")
+)
 
 func Config() Configuration {
 	once.Do(func() {

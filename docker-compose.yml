@@ -18,9 +18,10 @@ services:
 
     test: 
         build: .
-        command: go test .
+        command: go test ./...
         env_file:
             - environment/.env
+            - environment/.env.test
         ports:
             - 5000:5000
         depends_on:
