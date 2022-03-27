@@ -11,3 +11,7 @@ gin:
 
 mongodb:
     dsn: "mongodb://localhost"
+    timeouts:
+        connection: 10
+        ping: 2
+    schema: "DEV"

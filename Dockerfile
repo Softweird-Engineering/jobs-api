@@ -7,7 +7,7 @@ WORKDIR /app
 RUN go mod download
 
 COPY ./src /app
-RUN go build -o main
+RUN if [ "$GIN_MODE" != "test" ] ; then go build -o main; fi
 
 CMD [ "./main" ]
 
